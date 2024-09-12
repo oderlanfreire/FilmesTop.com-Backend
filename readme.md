@@ -11,7 +11,7 @@ Desenvolvimento de uma API REST com foco no usuário e sua interação com o cat
  - Visualizar todos os filmes que ja alugou.
 
  ### Diagrama de Classes:
- ![Diagrama de Classes](assets\images\image.png)
+ ![Diagrama de Classes](diagrama/image.png)
 
 
  ### STATUS

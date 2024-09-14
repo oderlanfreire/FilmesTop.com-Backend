@@ -1,7 +1,10 @@
 # FILMESTOP.COM - BACKEND
 
 ### Objetivo:
-Desenvolvimento de uma API REST com foco no usuário e sua interação com o catalogo de filmes, visando resolver as necessidade dos clientes.
+Desenvolvimento de uma API REST com foco no usuário e sua interação com o catalogo de filmes, visando resolver as necessidade dos clientes. O servidor pode ser executado com um desses comandos:
+```fastapi dev main.py```
+ou 
+```uvicorn main:app``` 
 
 ### Funcionalidades:
  - Listar filmes disponíveis por gênero.

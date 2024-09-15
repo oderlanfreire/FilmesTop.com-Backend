@@ -78,6 +78,7 @@ async def rent_movie(cliente_email: str, titulo: str, db: Session = Depends(get_
             if isinstance(usuario.filmes_alugados, str):
                 usuario.filmes_alugados = json.loads(usuario.filmes_alugados)
 
+
         aluguel = {"Nome" : filme.Nome}
         if aluguel not in usuario.filmes_alugados:
             usuario.filmes_alugados.append(aluguel)
@@ -98,6 +99,7 @@ async def rent_movie(cliente_email: str, titulo: str, db: Session = Depends(get_
 
 async def rate_movie(titulo: str, nota: float, cliente_email: str, db: Session = Depends(get_db)):
     try:
+        media_filme = 0
         titulo = titulo
         nota = round(nota, 1)
         if nota < 1 or nota >5 :
@@ -106,21 +108,41 @@ async def rate_movie(titulo: str, nota: float, cliente_email: str, db: Session =
         usuario = db.query(User).filter(User.email == cliente_email).first()
         if not usuario:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usuário não encontrado.")
-        
         filmes_alugados = json.loads(usuario.filmes_alugados)
 
-      
+        usuarios = db.query(User)
+        filme_catalogo = db.query(Filmes).filter(Filmes.Nome == titulo.capitalize()).first()
+        if filme_catalogo.total_avaliacoes == None:
+            filme_catalogo.total_avaliacoes = 0
+
+
         alugou = False
         for filme in filmes_alugados:
             if isinstance(filme, dict) and filme.get("Nome") == titulo:
-                filme["Nota"] = nota
-                alugou = True
-                break
+                if filme.get("Nota") is not None and filme["Nota"]:
+                    filme["Nota"] = nota
+                    alugou = True
+                    break
+                else:
+                    filme["Nota"] = nota
+                    alugou = True
+                    filme_catalogo.total_avaliacoes = filme_catalogo.total_avaliacoes + 1
+                    break
         if not alugou:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"O {titulo} ainda não foi alugado.")
         usuario.filmes_alugados = json.dumps(filmes_alugados)
+
+        for usr in usuarios:
+            filmes_usr = json.loads(usr.filmes_alugados)
+            if isinstance(filme, dict) and filme.get("Nome") == titulo:
+                if filme.get("Nota") is not None:
+                    media_filme = media_filme + filme["Nota"]
+
+        filme_catalogo.nota_final = media_filme / filme_catalogo.total_avaliacoes
+        
         db.commit()
         db.refresh(usuario)
+        db.refresh(filme_catalogo)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

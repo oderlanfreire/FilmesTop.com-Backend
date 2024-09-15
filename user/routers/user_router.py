@@ -1,11 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database.dependency import get_db
-from models.User.userModel import User
-from models.Filmes.filmesModel import Filmes
 from controllers.User.userController import *
-import json
+
 
 
 router = APIRouter(prefix="/user")

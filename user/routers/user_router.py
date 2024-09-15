@@ -20,7 +20,7 @@ async def create_user(user:UserRegister, db: Session = Depends(get_db)):
 
     
 
-@router.get('/listar-filmes/', status_code=status.HTTP_200_OK)
+@router.get('/listar-filmes', status_code=status.HTTP_200_OK)
 async def get_movie_list(db: Session = Depends(get_db)):
     return await movie_list(db)
 

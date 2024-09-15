@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database.dependency import get_db
-from models.userModel import User
-from models.filmesModel import Filmes
+from models.User.userModel import User
+from models.Filmes.filmesModel import Filmes
 import json
 
 

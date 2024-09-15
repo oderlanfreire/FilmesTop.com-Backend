@@ -1,5 +1,5 @@
 from database.database import Base
-from sqlalchemy import  Column, VARCHAR, Integer, Text
+from sqlalchemy import  Column, VARCHAR, Integer, Text, Numeric
 
 
 class Filmes(Base):
@@ -11,4 +11,5 @@ class Filmes(Base):
     Ano = Column(Integer)
     Sinopse = Column(Text)
     Diretor = Column(VARCHAR(50))
-
+    nota_final = Column(Numeric(precision=2, scale=1))
+    total_avaliacoes = Column(Integer)

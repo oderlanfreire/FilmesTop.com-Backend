@@ -99,10 +99,10 @@ async def rent_movie(cliente_email: str, titulo: str, db: Session = Depends(get_
 
 async def rate_movie(titulo: str, nota: float, cliente_email: str, db: Session = Depends(get_db)):
     try:
-        media_filme = 0
+        nota_filmes = 0
         titulo = titulo
         nota = round(nota, 1)
-        if nota < 1 or nota >5 :
+        if nota < 1 or nota > 5 :
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nota inválida, insira uma nota entre 1 e 5")
         
         usuario = db.query(User).filter(User.email == cliente_email).first()
@@ -134,15 +134,17 @@ async def rate_movie(titulo: str, nota: float, cliente_email: str, db: Session =
 
         for usr in usuarios:
             filmes_usr = json.loads(usr.filmes_alugados)
-            if isinstance(filme, dict) and filme.get("Nome") == titulo:
-                if filme.get("Nota") is not None:
-                    media_filme = media_filme + filme["Nota"]
+            for filme in filmes_usr:
+                if isinstance(filme, dict) and filme.get("Nome") == titulo:
+                    if filme.get("Nota") is not None:
+                        nota_filmes = nota_filmes + filme["Nota"]
 
-        filme_catalogo.nota_final = media_filme / filme_catalogo.total_avaliacoes
+        filme_catalogo.nota_final = nota_filmes / filme_catalogo.total_avaliacoes
         
         db.commit()
         db.refresh(usuario)
         db.refresh(filme_catalogo)
+        return {"message" : "Nota registrada com sucesso."}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
